@@ -1,3 +1,5 @@
+import { plantsData } from './plants';
+
 export const companionData = {
   Tomato: {
     name: 'Tomato',
@@ -152,3 +154,24 @@ export const companionData = {
     }
   }
 };
+
+// Auto-fill remaining plants from the main database so the planner has access to "everything"
+plantsData.forEach(plant => {
+  if (!companionData[plant.name]) {
+    let icon = '🌱';
+    if (plant.category === 'Fruits') icon = '🍎';
+    else if (plant.category === 'Vegetables') icon = '🥬';
+    else if (plant.category === 'Grains') icon = '🌾';
+    else if (plant.category === 'Herbs') icon = '🌿';
+    else if (plant.category === 'Flowers') icon = '🌺';
+
+    companionData[plant.name] = {
+      name: plant.name,
+      icon: icon,
+      category: plant.category,
+      companions: [],
+      combatants: [],
+      details: {}
+    };
+  }
+});
