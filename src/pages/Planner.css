@@ -1,0 +1,719 @@
+/* ─────────────────────────────────────────────────────────
+   Garden Grid Planner Stylesheet (Premium Glassmorphism + Themes)
+   ───────────────────────────────────────────────────────── */
+
+.planner-container {
+  --transition-speed: 0.5s;
+  min-height: calc(100vh - 80px);
+  padding: 2rem;
+  transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+  border-radius: var(--radius-xl);
+  margin-top: 1rem;
+}
+
+/* ── Theme Overlays ── */
+.planner-container.theme-lush {
+  background: linear-gradient(135deg, #f0fdf4 0%, #e8f5e9 40%, #c8e6c9 100%);
+  --theme-primary: #10b981;
+  --theme-primary-hover: #059669;
+  --theme-accent: #0ea5e9;
+  --theme-card-bg: rgba(255, 255, 255, 0.7);
+  --theme-card-border: rgba(16, 185, 129, 0.2);
+  --theme-text: #064e3b;
+  --theme-text-muted: #1e3a1e;
+  --theme-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.08);
+  --theme-glow: 0 0 15px rgba(16, 185, 129, 0.15);
+  --theme-badge-bg: rgba(16, 185, 129, 0.15);
+  --theme-btn-text: #ffffff;
+}
+
+.planner-container.theme-midnight {
+  background: linear-gradient(135deg, #090d16 0%, #030712 60%, #171026 100%);
+  --theme-primary: #10b981;
+  --theme-primary-hover: #34d399;
+  --theme-accent: #22d3ee;
+  --theme-card-bg: rgba(15, 23, 42, 0.65);
+  --theme-card-border: rgba(16, 185, 129, 0.25);
+  --theme-text: #f8fafc;
+  --theme-text-muted: #94a3b8;
+  --theme-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  --theme-glow: 0 0 20px rgba(16, 185, 129, 0.35);
+  --theme-badge-bg: rgba(16, 185, 129, 0.25);
+  --theme-btn-text: #0f172a;
+}
+
+.planner-container.theme-sunset {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffedd5 70%, #ffe4e6 100%);
+  --theme-primary: #f97316;
+  --theme-primary-hover: #ea580c;
+  --theme-accent: #e11d48;
+  --theme-card-bg: rgba(255, 255, 255, 0.7);
+  --theme-card-border: rgba(249, 115, 22, 0.2);
+  --theme-text: #431407;
+  --theme-text-muted: #7c2d12;
+  --theme-shadow: 0 8px 32px 0 rgba(249, 115, 22, 0.08);
+  --theme-glow: 0 0 15px rgba(249, 115, 22, 0.2);
+  --theme-badge-bg: rgba(249, 115, 22, 0.15);
+  --theme-btn-text: #ffffff;
+}
+
+.planner-container.theme-cyber {
+  background: linear-gradient(135deg, #090514 0%, #120324 50%, #030014 100%);
+  --theme-primary: #a855f7;
+  --theme-primary-hover: #c084fc;
+  --theme-accent: #06b6d4;
+  --theme-card-bg: rgba(20, 8, 35, 0.5);
+  --theme-card-border: rgba(168, 85, 247, 0.3);
+  --theme-text: #f5f5f7;
+  --theme-text-muted: #a1a1aa;
+  --theme-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+  --theme-glow: 0 0 25px rgba(168, 85, 247, 0.4);
+  --theme-badge-bg: rgba(168, 85, 247, 0.25);
+  --theme-btn-text: #ffffff;
+}
+
+/* ── Layout & Typography ── */
+.planner-header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.planner-title-area h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--theme-text);
+  line-height: 1.2;
+}
+
+.planner-title-area p {
+  color: var(--theme-text-muted);
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.planner-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .planner-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Workspace & Controls ── */
+.grid-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.planner-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.size-select-wrap {
+  display: flex;
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-card-border);
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--theme-shadow);
+  backdrop-filter: blur(8px);
+}
+
+.size-btn {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  background: transparent !important;
+  color: var(--theme-text-muted) !important;
+}
+
+.size-btn.active {
+  background: var(--theme-primary) !important;
+  color: var(--theme-btn-text) !important;
+  box-shadow: var(--theme-glow);
+}
+
+.planner-action-btns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.planner-action-btns button {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--theme-shadow);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: #ffffff !important;
+}
+
+.btn-danger:hover {
+  opacity: 0.9;
+}
+
+.btn-autofill {
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-primary)) !important;
+  color: #ffffff !important;
+}
+
+/* ── Interactive Grid ── */
+.garden-grid-container {
+  padding: 1.5rem;
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-card-border);
+  box-shadow: var(--theme-shadow);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.garden-grid {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  max-width: 540px;
+  aspect-ratio: 1 / 1;
+}
+
+.grid-cell {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  aspect-ratio: 1 / 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.planner-container.theme-lush .grid-cell {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(6, 78, 59, 0.15);
+}
+
+.grid-cell:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--theme-primary);
+  box-shadow: var(--theme-glow);
+}
+
+.planner-container.theme-lush .grid-cell:hover {
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.grid-cell.cell-selected {
+  border-color: var(--theme-accent) !important;
+  border-style: solid;
+  box-shadow: 0 0 15px var(--theme-accent);
+}
+
+.grid-cell.cell-occupied {
+  border-style: solid;
+  background: var(--theme-card-bg);
+  border-color: var(--theme-card-border);
+  box-shadow: var(--theme-shadow);
+}
+
+/* Neon glows for companion status */
+.grid-cell.cell-companion {
+  border-color: #10b981 !important;
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.1) 0%, var(--theme-card-bg) 70%);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+}
+
+.grid-cell.cell-conflict {
+  border-color: #f97316 !important;
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.1) 0%, var(--theme-card-bg) 70%);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+}
+
+.cell-emoji {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+  transition: transform 0.25s ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.grid-cell:hover .cell-emoji {
+  transform: scale(1.18);
+}
+
+.cell-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  max-width: 90%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cell-status-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cell-status-badge.companion {
+  background: rgba(16, 185, 129, 0.2);
+  color: #059669;
+}
+
+.planner-container.theme-midnight .cell-status-badge.companion {
+  color: #34d399;
+}
+
+.cell-status-badge.conflict {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+.planner-container.theme-midnight .cell-status-badge.conflict {
+  color: #f87171;
+}
+
+.cell-empty-btn {
+  font-size: 1.5rem;
+  color: var(--theme-text-muted);
+  opacity: 0.5;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  background: transparent !important;
+  color: var(--theme-text-muted) !important;
+  border: none !important;
+}
+
+.grid-cell:hover .cell-empty-btn {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* ── Tool Drawer & Cursor ── */
+.trowel-indicator {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-card-border);
+  border-radius: var(--radius-md);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--theme-shadow);
+  width: fit-content;
+  backdrop-filter: blur(8px);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* ── Sidebar Panels ── */
+.planner-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-panel {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-card-border);
+  box-shadow: var(--theme-shadow);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.sidebar-panel h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--theme-text);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Plant Picker Grid */
+.drawer-filter-row {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  scrollbar-width: none; /* Hide standard Firefox scrollbar */
+}
+
+.drawer-filter-row::-webkit-scrollbar {
+  display: none; /* Hide Chrome/Safari scrollbar */
+}
+
+.filter-pill-btn {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.725rem;
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--theme-text-muted) !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s ease;
+}
+
+.planner-container.theme-lush .filter-pill-btn {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.filter-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--theme-text) !important;
+}
+
+.filter-pill-btn.active {
+  background: var(--theme-primary) !important;
+  color: var(--theme-btn-text) !important;
+  box-shadow: var(--theme-glow);
+}
+
+.drawer-plants-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+@media (max-width: 480px) {
+  .drawer-plants-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.drawer-plant-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.6rem 0.4rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--theme-text) !important;
+}
+
+.planner-container.theme-lush .drawer-plant-item {
+  border-color: rgba(6, 78, 59, 0.08);
+  background: rgba(0, 0, 0, 0.02) !important;
+}
+
+.drawer-plant-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  transform: translateY(-2px);
+  border-color: var(--theme-primary);
+}
+
+.drawer-plant-item.active {
+  background: var(--theme-badge-bg) !important;
+  border-color: var(--theme-primary) !important;
+  box-shadow: var(--theme-glow);
+}
+
+.drawer-plant-emoji {
+  font-size: 1.8rem;
+  margin-bottom: 0.2rem;
+  transition: transform 0.2s ease;
+}
+
+.drawer-plant-item:hover .drawer-plant-emoji {
+  transform: scale(1.15);
+}
+
+.drawer-plant-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ── Harmony Meter & Stats ── */
+.harmony-meter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.harmony-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  color: var(--theme-text);
+  font-size: 0.9rem;
+}
+
+.harmony-bar-bg {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.planner-container.theme-lush .harmony-bar-bg {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.harmony-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stats-count-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.planner-container.theme-lush .stat-box {
+  background: rgba(0, 0, 0, 0.01);
+  border-color: rgba(6, 78, 59, 0.06);
+}
+
+.stat-box-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--theme-text);
+}
+
+.stat-box-lbl {
+  font-size: 0.65rem;
+  color: var(--theme-text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ── Cell Inspector Panel ── */
+.inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--theme-card-border);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.inspector-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--theme-text);
+}
+
+.inspector-category {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: var(--theme-badge-bg);
+  color: var(--theme-text);
+  font-weight: 700;
+}
+
+.relationship-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.rel-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.75rem;
+  border-left: 4px solid #cbd5e1;
+}
+
+.planner-container.theme-lush .rel-item {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.rel-item.rel-companion {
+  border-left-color: #10b981;
+}
+
+.rel-item.rel-conflict {
+  border-left-color: #f97316;
+}
+
+.rel-plant-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--theme-text);
+}
+
+.rel-status-text {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rel-status-text.companion {
+  color: #10b981;
+}
+
+.rel-status-text.conflict {
+  color: #f97316;
+}
+
+.rel-desc {
+  font-size: 0.75rem;
+  color: var(--theme-text-muted);
+  line-height: 1.45;
+}
+
+.inspector-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  color: var(--theme-text-muted);
+}
+
+.inspector-empty-icon {
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+  color: var(--theme-text-muted);
+}
+
+.inspector-empty p {
+  font-size: 0.75rem;
+}
+
+.btn-remove-selected {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+}
+
+/* ── Educational Section ── */
+.educational-section {
+  grid-column: span 2;
+}
+
+@media (max-width: 1024px) {
+  .educational-section {
+    grid-column: span 1;
+  }
+}
+
+.educational-card {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-card-border);
+  box-shadow: var(--theme-shadow);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.educational-card h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: var(--theme-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.edu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.edu-item h3 {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--theme-text);
+}
+
+.edu-item p {
+  font-size: 0.75rem;
+  color: var(--theme-text-muted);
+  line-height: 1.5;
+}

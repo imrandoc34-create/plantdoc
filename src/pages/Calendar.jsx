@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
   CalendarDays, Plus, Trash2, Droplets, FlaskConical, Scissors, Wheat, Bell,
-  CheckCircle2, XCircle, BarChart3, AlertTriangle, TrendingUp, Lightbulb
+  CheckCircle2, XCircle, BarChart3, AlertTriangle, TrendingUp, Lightbulb,
+  CloudRain, Snowflake, Thermometer
 } from 'lucide-react';
 import { plantsData } from '../data/plants';
 import './Calendar.css';
@@ -118,6 +119,15 @@ export default function Calendar() {
   const [expandedPlant, setExpandedPlant] = useState(null);
   const [activeTab, setActiveTab] = useState('schedule'); // 'schedule' | 'progress'
 
+  // Weather Simulator State Listener
+  const [weatherState, setWeatherState] = useState(() => localStorage.getItem('plantDocWeather') || 'Clear');
+
+  useEffect(() => {
+    const handleWeatherChange = () => setWeatherState(localStorage.getItem('plantDocWeather') || 'Clear');
+    window.addEventListener('weatherChange', handleWeatherChange);
+    return () => window.removeEventListener('weatherChange', handleWeatherChange);
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('plantDocCalendarPlants', JSON.stringify(myPlants));
   }, [myPlants]);
@@ -149,7 +159,32 @@ export default function Calendar() {
     }));
   };
 
-  const allEvents = myPlants.flatMap(p => p.schedule.map(e => ({ ...e, plant: p.name })));
+  // Apply weather simulation logic to schedule dynamically
+  const adjustedPlants = myPlants.map(p => {
+    return {
+      ...p,
+      schedule: p.schedule.map(e => {
+        let ev = { ...e };
+        const d = getDaysUntil(ev.date);
+        if (ev.status === 'pending') {
+          if (weatherState === 'Heavy Rain' && ev.type === 'water' && d >= 0 && d <= 2) {
+            ev.postponed = true;
+            ev.date = addDays(ev.date, 2);
+            ev.note = 'Postponed 48hrs due to Heavy Rain. ' + ev.note;
+          } else if (weatherState === 'Frost' && ev.type === 'prune' && d >= 0 && d <= 3) {
+            ev.warning = true;
+            ev.note = '⚠️ Frost warning: Pruning dangerous right now. ' + ev.note;
+          } else if (weatherState === 'Heatwave' && ev.type === 'water' && d >= 0 && d <= 2) {
+            ev.urgent = true;
+            ev.note = '🔥 Urgent: Extra watering needed during heatwave. ' + ev.note;
+          }
+        }
+        return ev;
+      })
+    };
+  });
+
+  const allEvents = adjustedPlants.flatMap(p => p.schedule.map(e => ({ ...e, plant: p.name })));
   const upcomingEvents = allEvents
     .filter(e => { const d = getDaysUntil(e.date); return d >= 0 && d <= 60 && (filterType === 'all' || e.type === filterType); })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -163,6 +198,26 @@ export default function Calendar() {
         <h1 className="calendar-title">Smart Care <span className="text-gradient">Calendar</span></h1>
         <p className="calendar-subtitle">Track tasks, mark them done, and let the app analyse your plant health automatically.</p>
       </div>
+
+      {/* Weather Simulator Banners */}
+      {weatherState === 'Heavy Rain' && (
+        <div className="alerts-banner" style={{ background: 'rgba(59, 130, 246, 0.1)', borderLeft: '4px solid #3b82f6', color: 'var(--theme-text)', marginBottom: '1.5rem', borderRadius: '12px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <CloudRain size={20} style={{ color: '#3b82f6', flexShrink: 0 }} />
+          <span><strong>Smart Weather Simulator:</strong> Heavy Rain forecasted. Watering tasks within 48 hours have been postponed to prevent over-saturation.</span>
+        </div>
+      )}
+      {weatherState === 'Frost' && (
+        <div className="alerts-banner" style={{ background: 'rgba(139, 92, 246, 0.1)', borderLeft: '4px solid #8b5cf6', color: 'var(--theme-text)', marginBottom: '1.5rem', borderRadius: '12px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Snowflake size={20} style={{ color: '#8b5cf6', flexShrink: 0 }} />
+          <span><strong>Smart Weather Simulator:</strong> Frost warning active. Pruning tasks are flagged as dangerous.</span>
+        </div>
+      )}
+      {weatherState === 'Heatwave' && (
+        <div className="alerts-banner warning" style={{ marginBottom: '1.5rem', borderRadius: '12px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', borderLeft: '4px solid #f59e0b', background: 'rgba(245, 158, 11, 0.1)', color: 'var(--theme-text)' }}>
+          <Thermometer size={20} style={{ color: '#f59e0b', flexShrink: 0 }} />
+          <span><strong>Smart Weather Simulator:</strong> Heatwave active. Watering tasks are marked as urgent.</span>
+        </div>
+      )}
 
       {/* Alert banners */}
       {(todayEvents.length > 0 || overdueEvents.length > 0) && (
@@ -239,8 +294,8 @@ export default function Calendar() {
 
       {/* Expanded Plant Detail */}
       {expandedPlant && (() => {
-        const plant = myPlants.find(p => p.name === expandedPlant);
-        const analysis = analyseProgress(plant);
+        const plant = adjustedPlants.find(p => p.name === expandedPlant);
+        const analysis = analyseProgress(myPlants.find(p => p.name === expandedPlant));
         return (
           <div className="plant-detail glass-panel animate-fade-in">
             <div className="detail-tabs">
@@ -263,7 +318,7 @@ export default function Calendar() {
                     const daysUntil = getDaysUntil(ev.date);
                     const isPast = daysUntil < 0;
                     return (
-                      <div key={ev.id} className={`timeline-item type-${cfg.color} status-${ev.status}`}>
+                      <div key={ev.id} className={`timeline-item type-${cfg.color} status-${ev.status} ${ev.urgent ? 'urgent-item' : ''} ${ev.warning ? 'warning-item' : ''} ${ev.postponed ? 'postponed-item' : ''}`} style={{ opacity: ev.postponed ? 0.7 : 1 }}>
                         <div className={`timeline-icon-wrap bg-${cfg.color}`}>
                           <Icon size={16} />
                         </div>

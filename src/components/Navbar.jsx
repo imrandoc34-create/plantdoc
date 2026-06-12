@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Stethoscope, Droplets, Lightbulb, ShieldPlus, CalendarDays } from 'lucide-react';
+import { Leaf, Stethoscope, Droplets, Lightbulb, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2 } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -40,6 +40,14 @@ const Navbar = () => {
           <Link to="/ideas" className={`nav-link ${isActive('/ideas')}`}>
             <Lightbulb className="nav-icon" />
             <span>Ideas</span>
+          </Link>
+          <Link to="/planner" className={`nav-link ${isActive('/planner')}`}>
+            <LayoutGrid className="nav-icon" />
+            <span>Planner</span>
+          </Link>
+          <Link to="/sandbox" className={`nav-link ${isActive('/sandbox')}`}>
+            <Gamepad2 className="nav-icon" />
+            <span>Sandbox</span>
           </Link>
         </nav>
       </div>

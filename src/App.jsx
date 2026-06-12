@@ -6,6 +6,8 @@ import Nutrition from './pages/Nutrition';
 import Ideas from './pages/Ideas';
 import Treatments from './pages/Treatments';
 import Calendar from './pages/Calendar';
+import Planner from './pages/Planner';
+import Sandbox from './pages/Sandbox';
 import './App.css';
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             <Route path="/ideas" element={<Ideas />} />
             <Route path="/treatments" element={<Treatments />} />
             <Route path="/calendar" element={<Calendar />} />
+            <Route path="/planner" element={<Planner />} />
+            <Route path="/sandbox" element={<Sandbox />} />
           </Routes>
         </main>
       </div>
