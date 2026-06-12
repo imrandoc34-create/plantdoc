@@ -123,3 +123,50 @@
   height: 48px;
   color: var(--color-border);
 }
+
+/* ── Mobile Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ideas-container {
+    padding: 1rem 0;
+  }
+
+  .ideas-title {
+    font-size: 2rem;
+  }
+
+  .ideas-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .ideas-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .ideas-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .idea-card {
+    padding: 1.25rem;
+  }
+
+  .add-idea-form {
+    padding: 1.25rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .ideas-title {
+    font-size: 1.75rem;
+  }
+}

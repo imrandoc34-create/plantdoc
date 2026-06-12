@@ -395,10 +395,144 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-  .calendar-title { font-size: 2rem; }
-  .form-row { flex-direction: column; }
-  .upcoming-header { flex-direction: column; align-items: flex-start; }
+@media (max-width: 768px) {
+  .calendar-container {
+    padding: 1rem 0;
+    gap: 1.25rem;
+  }
+
+  .calendar-title {
+    font-size: 2rem;
+  }
+
+  .calendar-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .calendar-header {
+    margin-bottom: 0;
+  }
+
+  .garden-panel {
+    padding: 1.25rem;
+  }
+
+  .garden-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row select,
+  .form-row input[type="date"] {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .plant-chips {
+    gap: 0.5rem;
+  }
+
+  .upcoming-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .upcoming-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .upcoming-card {
+    padding: 1rem;
+  }
+
+  .full-schedule {
+    padding: 1.25rem;
+  }
+
+  .plant-detail {
+    padding: 1.25rem;
+  }
+
+  .detail-tabs {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .detail-tab {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .health-score-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .gauge-wrap {
+    width: 110px;
+  }
+
+  .gauge-svg {
+    width: 110px;
+  }
+
+  .gauge-label {
+    font-size: 1.25rem;
+  }
+
+  .breakdown-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .breakdown-label {
+    min-width: 100px;
+  }
+
+  .timeline-item {
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .timeline-right {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .mark-btns {
+    gap: 0.25rem;
+  }
+
+  .alert-banner {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-title {
+    font-size: 1.75rem;
+  }
+
+  .timeline-label {
+    font-size: 0.875rem;
+  }
+
+  .upcoming-label {
+    font-size: 0.875rem;
+  }
+
+  .gauge-stats {
+    gap: 0.5rem;
+  }
 }
 
 /* ── Plant Detail ──────────────────────────────────────────── */

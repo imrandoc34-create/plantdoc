@@ -216,6 +216,59 @@
 .plants-box p { color: var(--color-text-muted); line-height: 1.4; }
 
 /* Responsive */
-@media (max-width: 600px) {
-  .treatments-title { font-size: 2rem; }
+@media (max-width: 768px) {
+  .treatments-container {
+    padding: 1rem 0;
+  }
+
+  .treatments-title {
+    font-size: 2rem;
+  }
+
+  .treatments-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .treatments-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .treatments-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .treatment-card {
+    padding: 1.25rem;
+  }
+
+  .treatment-card-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .t-category-scroll {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-btn {
+    flex-shrink: 0;
+  }
+
+  .search-bar {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .treatments-title {
+    font-size: 1.75rem;
+  }
+
+  .treatment-card-header h2 {
+    font-size: 1.05rem;
+  }
 }

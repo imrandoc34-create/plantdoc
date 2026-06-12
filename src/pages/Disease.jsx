@@ -61,7 +61,7 @@ const Disease = () => {
 
   // ── Scan (only fires when imageFile exists) ────────────────
   const handleScan = () => {
-    if (!imageFile) return; // safety guard — should never be null here
+    if (!imageFile) return; // safety guard
     setIsScanning(true);
     setScannerResult(null);
     setTimeout(() => {
@@ -191,7 +191,7 @@ const Disease = () => {
                 </div>
                 <h3>Upload or Drag & Drop a Plant Image</h3>
                 <p>Supports JPG, PNG, WEBP · Max 5MB</p>
-                {uploadError && <p className="upload-error">{uploadError}</p>}
+                {uploadError && <p className="upload-error" style={{color: 'red', marginTop: '1rem'}}>{uploadError}</p>}
                 <button
                   className="btn btn-primary mt-4"
                   type="button"
@@ -204,15 +204,20 @@ const Disease = () => {
 
             {/* Image selected — show preview + Analyze button */}
             {uploadedImage && !isScanning && !scannerResult && (
-              <div className="preview-area animate-fade-in">
-                <div className="preview-image-wrap">
-                  <img src={uploadedImage} alt="Uploaded plant" className="preview-image" />
-                  <button className="remove-image-btn" onClick={clearImage} title="Remove image">
+              <div className="preview-area animate-fade-in" style={{textAlign: 'center'}}>
+                <div className="preview-image-wrap" style={{position: 'relative', display: 'inline-block', marginBottom: '1rem'}}>
+                  <img src={uploadedImage} alt="Uploaded plant" className="preview-image" style={{maxWidth: '100%', maxHeight: '300px', borderRadius: '8px'}} />
+                  <button 
+                    className="remove-image-btn" 
+                    onClick={clearImage} 
+                    title="Remove image"
+                    style={{position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none', borderRadius: '50%', padding: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                  >
                     <X size={18} />
                   </button>
                 </div>
-                <div className="preview-info">
-                  <p className="preview-filename">📎 {imageFile?.name}</p>
+                <div className="preview-info" style={{marginBottom: '1rem', color: 'var(--color-text-muted)'}}>
+                  <p className="preview-filename" style={{fontWeight: 'bold', color: 'var(--color-text)'}}>📎 {imageFile?.name}</p>
                   <p className="preview-size">{(imageFile?.size / 1024).toFixed(1)} KB</p>
                 </div>
                 <button className="btn btn-primary mt-4 w-full" onClick={handleScan}>
@@ -269,227 +274,6 @@ const Disease = () => {
               </div>
             ) : (
               renderResult(symptomResult, () => { setSymptomResult(null); setSelectedSymptoms([]); }, 'Check New Symptoms')
-            )}
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
-};
-
-export default Disease;
-
-
-const Disease = () => {
-  const [activeTab, setActiveTab] = useState('scanner'); // 'scanner' or 'symptoms'
-  
-  // Scanner State
-  const [isScanning, setIsScanning] = useState(false);
-  const [scannerResult, setScannerResult] = useState(null);
-
-  // Symptom State
-  const [selectedSymptoms, setSelectedSymptoms] = useState([]);
-  const [symptomResult, setSymptomResult] = useState(null);
-
-  // Scanner Logic
-  const handleScan = () => {
-    setIsScanning(true);
-    setScannerResult(null);
-    setTimeout(() => {
-      setIsScanning(false);
-      setScannerResult({
-        name: 'Early Blight',
-        severityPct: 85,
-        confidence: 94,
-        causes: 'Caused by the fungus Alternaria solani. It spreads quickly in warm, humid weather and wet foliage.',
-        treatment: 'Apply copper-based fungicides immediately. Remove and destroy infected leaves to prevent spread.',
-        prevention: 'Water at the base of the plant to keep leaves dry. Crop rotation and staking plants to improve airflow.'
-      });
-    }, 2500);
-  };
-
-  // Symptom Logic
-  const toggleSymptom = (symptom) => {
-    if (selectedSymptoms.includes(symptom)) {
-      setSelectedSymptoms(selectedSymptoms.filter(s => s !== symptom));
-    } else {
-      setSelectedSymptoms([...selectedSymptoms, symptom]);
-    }
-  };
-
-  const analyzeSymptoms = () => {
-    if (selectedSymptoms.length === 0) return;
-    
-    // Simple matching algorithm
-    let bestMatch = null;
-    let maxMatches = 0;
-
-    diseasesData.forEach(disease => {
-      const matchCount = disease.symptoms.filter(s => selectedSymptoms.includes(s)).length;
-      if (matchCount > maxMatches) {
-        maxMatches = matchCount;
-        bestMatch = disease;
-      }
-    });
-
-    if (bestMatch && maxMatches > 0) {
-      setSymptomResult({
-        ...bestMatch,
-        confidence: Math.round((maxMatches / selectedSymptoms.length) * 100)
-      });
-    } else {
-      setSymptomResult({
-        name: 'Unknown Condition',
-        severityPct: 0,
-        confidence: 0,
-        causes: 'Unable to pinpoint a single cause based on the selected symptoms.',
-        treatment: 'Please consult a local agricultural expert or try adding more specific symptoms.',
-        prevention: 'Maintain general plant hygiene and optimal watering.'
-      });
-    }
-  };
-
-  const renderResult = (result, clearFn, btnText) => (
-    <div className="result-area animate-fade-in">
-      <div className="result-header">
-        <AlertTriangle className="alert-icon" />
-        <h2>Diagnosis Complete</h2>
-      </div>
-      
-      <div className="result-details">
-        <div className="detail-row">
-          <span className="detail-label">Issue Identified:</span>
-          <span className="detail-value font-bold text-red">{result.name}</span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Severity Level:</span>
-          <span className="detail-value severity-value">
-            <div className="severity-bar-bg">
-              <div 
-                className="severity-bar-fill" 
-                style={{ 
-                  width: `${result.severityPct}%`, 
-                  backgroundColor: result.severityPct > 70 ? '#ef4444' : result.severityPct > 40 ? '#f59e0b' : '#10b981' 
-                }}
-              ></div>
-            </div>
-            {result.severityPct}%
-          </span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Match Score / Confidence:</span>
-          <span className="detail-value">{result.confidence}%</span>
-        </div>
-      </div>
-
-      <div className="info-boxes">
-        <div className="info-box causes">
-          <h3>Why is this happening?</h3>
-          <p>{result.causes}</p>
-        </div>
-        <div className="info-box treatment">
-          <h3><CheckCircle className="inline-icon" /> Treatment</h3>
-          <p>{result.treatment}</p>
-        </div>
-        <div className="info-box prevention">
-          <h3><Shield className="inline-icon" /> Prevention</h3>
-          <p>{result.prevention}</p>
-        </div>
-      </div>
-
-      <button className="btn btn-secondary mt-4 w-full" onClick={clearFn}>
-        {btnText}
-      </button>
-    </div>
-  );
-
-  return (
-    <div className="disease-container animate-fade-in">
-      <div className="scanner-header">
-        <h1 className="scanner-title">Plant <span className="text-gradient">Diagnosis</span></h1>
-        <p className="scanner-subtitle">Identify issues using our AI camera or by entering observed symptoms.</p>
-      </div>
-
-      <div className="tabs-container">
-        <button 
-          className={`tab-btn ${activeTab === 'scanner' ? 'active' : ''}`}
-          onClick={() => setActiveTab('scanner')}
-        >
-          <Camera className="tab-icon" /> AI Image Scanner
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'symptoms' ? 'active' : ''}`}
-          onClick={() => setActiveTab('symptoms')}
-        >
-          <ClipboardList className="tab-icon" /> Symptom Checker
-        </button>
-      </div>
-      
-      <div className="scanner-card glass-panel">
-        
-        {/* --- IMAGE SCANNER MODE --- */}
-        {activeTab === 'scanner' && (
-          <div className="tab-content animate-fade-in">
-            {!isScanning && !scannerResult && (
-              <div className="upload-area" onClick={handleScan}>
-                <div className="upload-icon-wrapper">
-                  <UploadCloud className="upload-icon" />
-                </div>
-                <h3>Click to Upload Plant Image</h3>
-                <p>Supports JPG, PNG (Max 5MB)</p>
-                <button className="btn btn-primary mt-4">
-                  <Search className="btn-icon" /> Analyze Image
-                </button>
-              </div>
-            )}
-
-            {isScanning && (
-              <div className="scanning-area">
-                <div className="scanner-animation">
-                  <div className="scan-line"></div>
-                  <img src="https://images.unsplash.com/photo-1592424001806-5381f964b4ec?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Plant scanning" className="scanning-image" />
-                </div>
-                <h3 className="scanning-text">Analyzing plant health...</h3>
-                <p>Our AI is cross-referencing thousands of disease patterns.</p>
-              </div>
-            )}
-
-            {scannerResult && renderResult(scannerResult, () => setScannerResult(null), "Scan Another Plant")}
-          </div>
-        )}
-
-        {/* --- SYMPTOM CHECKER MODE --- */}
-        {activeTab === 'symptoms' && (
-          <div className="tab-content animate-fade-in">
-            {!symptomResult ? (
-              <div className="symptom-selector">
-                <h3 style={{marginBottom: '1rem', color: 'var(--color-text)'}}>What are you observing?</h3>
-                <div className="symptoms-grid">
-                  {allSymptoms.map((symp, idx) => (
-                    <div 
-                      key={idx} 
-                      className={`symptom-tag ${selectedSymptoms.includes(symp) ? 'selected' : ''}`}
-                      onClick={() => toggleSymptom(symp)}
-                    >
-                      {symp}
-                    </div>
-                  ))}
-                </div>
-                <button 
-                  className="btn btn-primary mt-4 w-full" 
-                  onClick={analyzeSymptoms}
-                  disabled={selectedSymptoms.length === 0}
-                  style={{ opacity: selectedSymptoms.length === 0 ? 0.5 : 1 }}
-                >
-                  <Search className="btn-icon" /> Analyze Symptoms
-                </button>
-              </div>
-            ) : (
-              renderResult(symptomResult, () => {
-                setSymptomResult(null);
-                setSelectedSymptoms([]);
-              }, "Check New Symptoms")
             )}
           </div>
         )}
