@@ -3,7 +3,6 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Disease from './pages/Disease';
 import Nutrition from './pages/Nutrition';
-import Ideas from './pages/Ideas';
 import Treatments from './pages/Treatments';
 import Calendar from './pages/Calendar';
 import Planner from './pages/Planner';
@@ -20,7 +19,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/disease" element={<Disease />} />
             <Route path="/nutrition" element={<Nutrition />} />
-            <Route path="/ideas" element={<Ideas />} />
             <Route path="/treatments" element={<Treatments />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/planner" element={<Planner />} />
