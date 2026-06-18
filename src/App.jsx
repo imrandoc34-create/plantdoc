@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Disease from './pages/Disease';
-import Timeline from './pages/Timeline';
 import Nutrition from './pages/Nutrition';
 import Ideas from './pages/Ideas';
 import Treatments from './pages/Treatments';
@@ -20,7 +19,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/disease" element={<Disease />} />
-            <Route path="/timeline" element={<Timeline />} />
             <Route path="/nutrition" element={<Nutrition />} />
             <Route path="/ideas" element={<Ideas />} />
             <Route path="/treatments" element={<Treatments />} />
