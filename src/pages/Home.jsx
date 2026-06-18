@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Search,
   Sun,
@@ -29,6 +29,7 @@ import { diseasesData } from '../data/diseases';
 import './Home.css';
 
 const Home = () => {
+  const navigate = useNavigate();
   // Theme State
   const [theme, setTheme] = useState(() => localStorage.getItem('plant-doc-theme') || 'lush');
 
@@ -42,6 +43,26 @@ const Home = () => {
   const [scanProgress, setScanProgress] = useState(0);
   const [scanStatus, setScanStatus] = useState('');
   const [scanResult, setScanResult] = useState(null);
+  const [scanSaved, setScanSaved] = useState(false);
+
+  // Save demo scan to timeline
+  const handleSaveDemoScan = () => {
+    if (!scanResult) return;
+    const confidenceNum = parseInt(scanResult.confidence, 10) || 90;
+    const payload = {
+      diagnosis: scanResult.diseaseName,
+      severity: scanResult.severity,
+      confidence: confidenceNum,
+      imageUrl: null,
+      notes: `Demo scan from dashboard. Cause: ${scanResult.cause}`,
+      isHealthy: scanResult.severity === 0,
+      newPlantName: `${scanResult.name} (Demo)`,
+      species: 'Demo specimen'
+    };
+    localStorage.setItem('plantdoc-pending-scan', JSON.stringify(payload));
+    setScanSaved(true);
+    setTimeout(() => navigate('/timeline'), 900);
+  };
 
   // Sensor Widget State
   const [temp, setTemp] = useState(24.8);
@@ -395,11 +416,25 @@ const Home = () => {
                   </Link>
                   <button
                     className="btn btn-outline-sm btn-sm"
-                    onClick={() => setScanResult(null)}
+                    onClick={() => { setScanResult(null); setScanSaved(false); }}
                   >
                     Clear Result
                   </button>
                 </div>
+
+                {/* Save to Timeline CTA */}
+                {scanSaved ? (
+                  <div style={{ marginTop: '0.75rem', padding: '0.625rem 1rem', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 'var(--radius-md)', fontSize: '0.82rem', fontWeight: 600, color: '#047857', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    ✓ Saved — redirecting to Timeline…
+                  </div>
+                ) : (
+                  <button
+                    style={{ marginTop: '0.75rem', width: '100%', padding: '0.6rem 1rem', borderRadius: 'var(--radius-xl)', fontWeight: 700, fontSize: '0.82rem', background: 'linear-gradient(135deg,#10b981,#0ea5e9)', color: '#fff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', cursor: 'pointer', transition: 'opacity 0.2s' }}
+                    onClick={handleSaveDemoScan}
+                  >
+                    📋 Save to Plant Timeline
+                  </button>
+                )}
               </div>
             )}
           </div>

@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
-import { UploadCloud, CheckCircle, AlertTriangle, Search, Camera, ClipboardList, Shield, X, ImagePlus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UploadCloud, CheckCircle, AlertTriangle, Search, Camera, ClipboardList, Shield, X, ImagePlus, History, Save, Plus } from 'lucide-react';
 import { diseasesData, allSymptoms } from '../data/diseases';
 import './Disease.css';
 
 const Disease = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('scanner');
 
   // Scanner State
@@ -17,6 +19,46 @@ const Disease = () => {
   // Symptom State
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
   const [symptomResult, setSymptomResult] = useState(null);
+
+  // Timeline Save State
+  const [showTimelineSave, setShowTimelineSave] = useState(false);
+  const [savedToTimeline, setSavedToTimeline] = useState(false);
+  const [timelinePlantMode, setTimelinePlantMode] = useState('existing'); // 'existing' | 'new'
+  const [timelineSelectedPlant, setTimelineSelectedPlant] = useState('');
+  const [timelineNewPlantName, setTimelineNewPlantName] = useState('');
+  const [timelineNewPlantSpecies, setTimelineNewPlantSpecies] = useState('');
+  const [timelineNotes, setTimelineNotes] = useState('');
+
+  // Get existing timeline plants from localStorage
+  const getTimelinePlants = () => {
+    try {
+      const raw = localStorage.getItem('plantdoc-timeline-data');
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  };
+
+  const saveToTimeline = (result, imageUrl) => {
+    const plants = getTimelinePlants();
+    const scanPayload = {
+      diagnosis: result.name,
+      severity: result.severityPct,
+      confidence: result.confidence,
+      imageUrl: imageUrl || null,
+      notes: timelineNotes,
+      isHealthy: result.severityPct === 0
+    };
+    if (timelinePlantMode === 'new' && timelineNewPlantName.trim()) {
+      scanPayload.newPlantName = timelineNewPlantName.trim();
+      scanPayload.species = timelineNewPlantSpecies.trim() || 'Unknown species';
+    } else if (timelinePlantMode === 'existing' && timelineSelectedPlant) {
+      scanPayload.plantId = timelineSelectedPlant;
+    } else {
+      return;
+    }
+    localStorage.setItem('plantdoc-pending-scan', JSON.stringify(scanPayload));
+    setSavedToTimeline(true);
+    setShowTimelineSave(false);
+  };
 
   // ── File handling ──────────────────────────────────────────
   const handleFileChange = (e) => {
@@ -100,51 +142,153 @@ const Disease = () => {
   };
 
   // ── Shared result renderer ─────────────────────────────────
-  const renderResult = (result, clearFn, btnText) => (
-    <div className="result-area animate-fade-in">
-      <div className="result-header">
-        <AlertTriangle className="alert-icon" />
-        <h2>Diagnosis Complete</h2>
-      </div>
+  const renderResult = (result, clearFn, btnText, imageUrl = null) => {
+    const existingPlants = getTimelinePlants();
+    return (
+      <div className="result-area animate-fade-in">
+        <div className="result-header">
+          <AlertTriangle className="alert-icon" />
+          <h2>Diagnosis Complete</h2>
+        </div>
 
-      <div className="result-details">
-        <div className="detail-row">
-          <span className="detail-label">Issue Identified:</span>
-          <span className="detail-value font-bold text-red">{result.name}</span>
+        <div className="result-details">
+          <div className="detail-row">
+            <span className="detail-label">Issue Identified:</span>
+            <span className="detail-value font-bold text-red">{result.name}</span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Severity Level:</span>
+            <span className="detail-value severity-value">
+              <div className="severity-bar-bg">
+                <div className="severity-bar-fill" style={{ width: `${result.severityPct}%`, backgroundColor: result.severityPct > 70 ? '#ef4444' : result.severityPct > 40 ? '#f59e0b' : '#10b981' }} />
+              </div>
+              {result.severityPct}%
+            </span>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Match Score / Confidence:</span>
+            <span className="detail-value">{result.confidence}%</span>
+          </div>
         </div>
-        <div className="detail-row">
-          <span className="detail-label">Severity Level:</span>
-          <span className="detail-value severity-value">
-            <div className="severity-bar-bg">
-              <div className="severity-bar-fill" style={{ width: `${result.severityPct}%`, backgroundColor: result.severityPct > 70 ? '#ef4444' : result.severityPct > 40 ? '#f59e0b' : '#10b981' }} />
-            </div>
-            {result.severityPct}%
-          </span>
-        </div>
-        <div className="detail-row">
-          <span className="detail-label">Match Score / Confidence:</span>
-          <span className="detail-value">{result.confidence}%</span>
-        </div>
-      </div>
 
-      <div className="info-boxes">
-        <div className="info-box causes">
-          <h3>Why is this happening?</h3>
-          <p>{result.causes}</p>
+        <div className="info-boxes">
+          <div className="info-box causes">
+            <h3>Why is this happening?</h3>
+            <p>{result.causes}</p>
+          </div>
+          <div className="info-box treatment">
+            <h3><CheckCircle className="inline-icon" /> Treatment</h3>
+            <p>{result.treatment}</p>
+          </div>
+          <div className="info-box prevention">
+            <h3><Shield className="inline-icon" /> Prevention</h3>
+            <p>{result.prevention}</p>
+          </div>
         </div>
-        <div className="info-box treatment">
-          <h3><CheckCircle className="inline-icon" /> Treatment</h3>
-          <p>{result.treatment}</p>
-        </div>
-        <div className="info-box prevention">
-          <h3><Shield className="inline-icon" /> Prevention</h3>
-          <p>{result.prevention}</p>
-        </div>
-      </div>
 
-      <button className="btn btn-secondary mt-4 w-full" onClick={clearFn}>{btnText}</button>
-    </div>
-  );
+        {/* ── Save to Timeline ── */}
+        {savedToTimeline ? (
+          <div className="timeline-save-success">
+            <CheckCircle size={20} style={{ color: '#10b981' }} />
+            <span>Saved to Timeline!</span>
+            <button className="btn btn-primary timeline-view-btn" onClick={() => navigate('/timeline')}>
+              <History size={14} /> View Timeline
+            </button>
+          </div>
+        ) : (
+          <>
+            {!showTimelineSave ? (
+              <button
+                className="btn btn-timeline mt-4 w-full"
+                onClick={() => { setShowTimelineSave(true); setSavedToTimeline(false); }}
+              >
+                <History size={16} /> Save to Plant Timeline
+              </button>
+            ) : (
+              <div className="timeline-save-panel">
+                <div className="timeline-save-header">
+                  <span><History size={16} /> Save Scan to Timeline</span>
+                  <button onClick={() => setShowTimelineSave(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}>
+                    <X size={16} />
+                  </button>
+                </div>
+
+                <div className="timeline-save-tabs">
+                  <button
+                    className={`tl-tab ${timelinePlantMode === 'existing' ? 'active' : ''}`}
+                    onClick={() => setTimelinePlantMode('existing')}
+                    disabled={existingPlants.length === 0}
+                  >
+                    Existing Plant
+                  </button>
+                  <button
+                    className={`tl-tab ${timelinePlantMode === 'new' ? 'active' : ''}`}
+                    onClick={() => setTimelinePlantMode('new')}
+                  >
+                    <Plus size={13} /> New Plant
+                  </button>
+                </div>
+
+                {timelinePlantMode === 'existing' && (
+                  existingPlants.length === 0 ? (
+                    <p className="tl-empty">No plants in timeline yet. Switch to "New Plant".</p>
+                  ) : (
+                    <select
+                      className="tl-select"
+                      value={timelineSelectedPlant}
+                      onChange={e => setTimelineSelectedPlant(e.target.value)}
+                    >
+                      <option value="">-- Select a plant --</option>
+                      {existingPlants.map(p => (
+                        <option key={p.id} value={p.id}>{p.name}</option>
+                      ))}
+                    </select>
+                  )
+                )}
+
+                {timelinePlantMode === 'new' && (
+                  <>
+                    <input
+                      className="tl-input"
+                      placeholder="Plant name (e.g. Herb Garden Basil)"
+                      value={timelineNewPlantName}
+                      onChange={e => setTimelineNewPlantName(e.target.value)}
+                    />
+                    <input
+                      className="tl-input"
+                      placeholder="Species (optional)"
+                      value={timelineNewPlantSpecies}
+                      onChange={e => setTimelineNewPlantSpecies(e.target.value)}
+                    />
+                  </>
+                )}
+
+                <textarea
+                  className="tl-textarea"
+                  placeholder="Add notes (treatment applied, observations)..."
+                  value={timelineNotes}
+                  onChange={e => setTimelineNotes(e.target.value)}
+                />
+
+                <button
+                  className="btn btn-primary mt-4 w-full"
+                  onClick={() => saveToTimeline(result, imageUrl)}
+                  disabled={
+                    (timelinePlantMode === 'existing' && !timelineSelectedPlant) ||
+                    (timelinePlantMode === 'new' && !timelineNewPlantName.trim())
+                  }
+                >
+                  <Save size={15} /> Save Scan to Timeline
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        <button className="btn btn-secondary mt-4 w-full" onClick={() => { clearFn(); setSavedToTimeline(false); setShowTimelineSave(false); }}>{btnText}</button>
+      </div>
+    );
+  };
 
   // ── JSX ───────────────────────────────────────────────────
   return (
@@ -242,7 +386,7 @@ const Disease = () => {
             )}
 
             {/* Result */}
-            {scannerResult && renderResult(scannerResult, clearImage, 'Scan Another Plant')}
+            {scannerResult && renderResult(scannerResult, clearImage, 'Scan Another Plant', uploadedImage)}
           </div>
         )}
 

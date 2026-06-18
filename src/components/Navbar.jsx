@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Stethoscope, Droplets, Lightbulb, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2 } from 'lucide-react';
+import { Leaf, Stethoscope, Droplets, Lightbulb, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2, History } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -24,6 +24,10 @@ const Navbar = () => {
           <Link to="/disease" className={`nav-link ${isActive('/disease')}`}>
             <Stethoscope className="nav-icon" />
             <span>Scanner</span>
+          </Link>
+          <Link to="/timeline" className={`nav-link ${isActive('/timeline')}`}>
+            <History className="nav-icon" />
+            <span>Timeline</span>
           </Link>
           <Link to="/treatments" className={`nav-link ${isActive('/treatments')}`}>
             <ShieldPlus className="nav-icon" />
