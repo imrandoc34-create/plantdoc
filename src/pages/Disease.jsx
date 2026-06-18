@@ -100,9 +100,56 @@ const Disease = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // ── Plant Detection Heuristic ────────────────────────────────
+  const checkPlantContent = (file) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const maxDim = 200;
+        let { width, height } = img;
+        if (width > height) {
+          if (width > maxDim) { height = (height * maxDim) / width; width = maxDim; }
+        } else {
+          if (height > maxDim) { width = (width * maxDim) / height; height = maxDim; }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        const imageData = ctx.getImageData(0, 0, width, height).data;
+        let plantPixels = 0;
+        let totalPixels = 0;
+        for (let i = 0; i < imageData.length; i += 4) {
+          const r = imageData[i];
+          const g = imageData[i + 1];
+          const b = imageData[i + 2];
+          const a = imageData[i + 3];
+          if (a < 128) continue;
+          totalPixels++;
+          const isGreenish = g > r * 1.1 && g > b * 1.1;
+          const isBrownish = r > g && g > b && r > 60 && r < 180;
+          const isYellowish = r > 120 && g > 120 && b < 100;
+          if (isGreenish || isBrownish || isYellowish) plantPixels++;
+        }
+        const plantRatio = totalPixels > 0 ? plantPixels / totalPixels : 0;
+        resolve(plantRatio > 0.15);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   // ── Scan (only fires when imageFile exists) ────────────────
-  const handleScan = () => {
-    if (!imageFile) return; // safety guard
+  const handleScan = async () => {
+    if (!imageFile) return;
+    
+    const isPlant = await checkPlantContent(imageFile);
+    if (!isPlant) {
+      setUploadError('This image does not appear to contain plant material. Please upload a photo of a plant leaf or crop.');
+      return;
+    }
+    
+    setUploadError('');
     setIsScanning(true);
     setScannerResult(null);
     setTimeout(() => {
