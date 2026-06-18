@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Gamepad2, Sprout, Flower, Carrot, Droplets, FlaskConical, Sun,
   Heart, TrendingUp, Circle, Leaf, TreePine, RefreshCcw

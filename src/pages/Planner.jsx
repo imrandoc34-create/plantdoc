@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
-  LayoutGrid, Trash2, Sparkles, Save, RefreshCw, Sprout, Moon, 
-  Sun, Info, Lightbulb, HelpCircle, X, Check, AlertTriangle 
+  LayoutGrid, Trash2, Sparkles, Save, Sprout, Moon, 
+  Sun, Info, Lightbulb, HelpCircle, X 
 } from 'lucide-react';
 import { companionData } from '../data/companions';
 import './Planner.css';

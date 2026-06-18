@@ -38,7 +38,6 @@ const Disease = () => {
   };
 
   const saveToTimeline = (result, imageUrl) => {
-    const plants = getTimelinePlants();
     const scanPayload = {
       diagnosis: result.name,
       severity: result.severityPct,
@@ -386,6 +385,7 @@ const Disease = () => {
             )}
 
             {/* Result */}
+            {/* eslint-disable-next-line react-hooks/refs */}
             {scannerResult && renderResult(scannerResult, clearImage, 'Scan Another Plant', uploadedImage)}
           </div>
         )}

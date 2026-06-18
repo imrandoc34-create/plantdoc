@@ -25,7 +25,6 @@ import {
   Snowflake
 } from 'lucide-react';
 import { plantsData } from '../data/plants';
-import { diseasesData } from '../data/diseases';
 import './Home.css';
 
 const Home = () => {

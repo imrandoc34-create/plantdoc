@@ -141,6 +141,19 @@ export default function Timeline() {
     saveToStorage(plants);
   }, [plants]);
 
+  function buildLog(scan) {
+    return {
+      id: `log-${Date.now()}`,
+      date: new Date().toISOString(),
+      diagnosis: scan.diagnosis || 'Unknown',
+      severity: scan.severity || 0,
+      confidence: scan.confidence || 0,
+      notes: scan.notes || '',
+      imageUrl: scan.imageUrl || null,
+      isHealthy: scan.isHealthy || false
+    };
+  }
+
   // Check for external saves from scanner
   useEffect(() => {
     const pending = localStorage.getItem('plantdoc-pending-scan');
@@ -160,39 +173,30 @@ export default function Timeline() {
           recoveryProgress: 0,
           logs: [newLog]
         };
-        setPlants(prev => {
-          const updated = [...prev, newPlant];
-          saveToStorage(updated);
-          return updated;
-        });
-        setActivePlantId(newId);
+        setTimeout(() => {
+          setPlants(prev => {
+            const updated = [...prev, newPlant];
+            saveToStorage(updated);
+            return updated;
+          });
+          setActivePlantId(newId);
+        }, 0);
       } else if (scan.plantId) {
         const newLog = buildLog(scan);
-        setPlants(prev => {
-          const updated = prev.map(p => p.id === scan.plantId
-            ? { ...p, logs: [...p.logs, newLog] }
-            : p
-          );
-          saveToStorage(updated);
-          return updated;
-        });
-        setActivePlantId(scan.plantId);
+        setTimeout(() => {
+          setPlants(prev => {
+            const updated = prev.map(p => p.id === scan.plantId
+              ? { ...p, logs: [...p.logs, newLog] }
+              : p
+            );
+            saveToStorage(updated);
+            return updated;
+          });
+          setActivePlantId(scan.plantId);
+        }, 0);
       }
     } catch { /* ignore */ }
   }, []);
-
-  function buildLog(scan) {
-    return {
-      id: `log-${Date.now()}`,
-      date: new Date().toISOString(),
-      diagnosis: scan.diagnosis || 'Unknown',
-      severity: scan.severity || 0,
-      confidence: scan.confidence || 0,
-      notes: scan.notes || '',
-      imageUrl: scan.imageUrl || null,
-      isHealthy: scan.isHealthy || false
-    };
-  }
 
   const activePlant = plants.find(p => p.id === activePlantId);
   const sortedLogs = activePlant
@@ -548,7 +552,7 @@ export default function Timeline() {
                   <h3 style={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <History size={18} style={{ color: 'var(--theme-primary)' }} /> Scan History
                   </h3>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--theme-text-muted)', background: 'var(--theme-badge-bg)', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontWeight: 600, color: 'var(--theme-primary)' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--theme-primary)', background: 'var(--theme-badge-bg)', padding: '0.2rem 0.6rem', borderRadius: '9999px', fontWeight: 600 }}>
                     {sortedLogs.length} entries
                   </span>
                 </div>
