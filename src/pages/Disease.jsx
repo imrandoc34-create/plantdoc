@@ -178,13 +178,14 @@ const Disease = () => {
     setScannerResult(null);
     setTimeout(() => {
       setIsScanning(false);
+      const randomDisease = diseasesData[Math.floor(Math.random() * diseasesData.length)];
       setScannerResult({
-        name: 'Early Blight',
-        severityPct: 85,
-        confidence: 94,
-        causes: 'Caused by the fungus Alternaria solani. It spreads quickly in warm, humid weather and wet foliage.',
-        treatment: 'Apply copper-based fungicides immediately. Remove and destroy infected leaves to prevent spread.',
-        prevention: 'Water at the base of the plant to keep leaves dry. Crop rotation and staking plants to improve airflow.'
+        name: randomDisease.name,
+        severityPct: randomDisease.severityPct,
+        confidence: Math.floor(80 + Math.random() * 18), // Random between 80 and 97
+        causes: randomDisease.causes,
+        treatment: randomDisease.treatment,
+        prevention: randomDisease.prevention
       });
     }, 2500);
   };
