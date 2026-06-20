@@ -135,14 +135,18 @@ const Disease = () => {
             const a = imageData[i + 3];
             if (a < 128) continue;
             totalPixels++;
-            const isGreenish = g > r * 1.1 && g > b * 1.1;
-            const isBrownish = r > g && g > b && r > 60 && r < 180;
-            const isYellowish = r > 120 && g > 120 && b < 100;
-            if (isGreenish || isBrownish || isYellowish) plantPixels++;
+            
+            // Green check: g is dominant
+            const isGreenish = g > r * 1.05 && g > b * 1.05;
+            
+            // Yellow/Brown check: r and g are close, b is low (prevents typical skin tones and wood)
+            const isYellowBrown = r > 70 && g > 50 && b < 100 && Math.abs(r - g) < 40 && r > b && g > b;
+            
+            if (isGreenish || isYellowBrown) plantPixels++;
           }
           const plantRatio = totalPixels > 0 ? plantPixels / totalPixels : 0;
           URL.revokeObjectURL(objectUrl);
-          resolve(plantRatio > 0.15);
+          resolve(plantRatio > 0.20);
         } catch (err) {
           URL.revokeObjectURL(objectUrl);
           console.error('Plant detection error:', err);

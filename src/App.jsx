@@ -7,6 +7,7 @@ import Treatments from './pages/Treatments';
 import Calendar from './pages/Calendar';
 import Planner from './pages/Planner';
 import Sandbox from './pages/Sandbox';
+import Timeline from './pages/Timeline';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/planner" element={<Planner />} />
             <Route path="/sandbox" element={<Sandbox />} />
+            <Route path="/timeline" element={<Timeline />} />
           </Routes>
         </main>
       </div>
