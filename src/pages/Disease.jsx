@@ -167,15 +167,27 @@ const Disease = () => {
   const handleScan = async () => {
     if (!imageFile) return;
     
-    const isPlant = await checkPlantContent(imageFile);
-    if (!isPlant) {
-      setUploadError('This image does not appear to contain plant material. Please upload a photo of a plant leaf or crop.');
-      return;
-    }
-    
     setUploadError('');
     setIsScanning(true);
     setScannerResult(null);
+
+    const isPlant = await checkPlantContent(imageFile);
+    
+    if (!isPlant) {
+      setTimeout(() => {
+        setIsScanning(false);
+        setScannerResult({
+          name: 'Not a Plant Detected',
+          severityPct: 0,
+          confidence: 99,
+          causes: 'The uploaded image does not appear to contain clear plant material (such as leaves, stems, or crop foliage).',
+          treatment: 'Please upload a clearer photo focusing specifically on the plant or the affected leaf area.',
+          prevention: 'Ensure the plant is well-lit, in focus, and takes up a majority of the frame.'
+        });
+      }, 1500);
+      return;
+    }
+    
     setTimeout(() => {
       setIsScanning(false);
       const randomDisease = diseasesData[Math.floor(Math.random() * diseasesData.length)];
