@@ -1,20 +1,30 @@
 import { useState } from 'react';
-import { Sprout, User, Lock, ArrowRight, Loader2 } from 'lucide-react';
+import { Sprout, User, Lock, ArrowRight, Loader2, MapPin, Leaf } from 'lucide-react';
 import './Login.css';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [farmName, setFarmName] = useState('');
+  const [region, setRegion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
-      setError('Please enter both Farmer ID and Password.');
-      return;
+    if (isRegistering) {
+      if (!email || !password || !farmName || !region) {
+        setError('Please fill in all registration fields.');
+        return;
+      }
+    } else {
+      if (!email || !password) {
+        setError('Please enter both Farmer ID and Password.');
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -26,14 +36,23 @@ const Login = ({ onLogin }) => {
       const profileData = {
         farmerId: email,
         loginTime: new Date().toISOString(),
-        farmName: `${email}'s Farm`,
-        region: 'India',
+        farmName: isRegistering ? farmName : `${email}'s Farm`,
+        region: isRegistering ? region : 'India',
         role: 'Farmer',
         accountStatus: 'Active',
       };
       localStorage.setItem('plantdoc-farmer-profile', JSON.stringify(profileData));
       onLogin(); // Trigger login success
     }, 1200);
+  };
+
+  const toggleMode = () => {
+    setIsRegistering(!isRegistering);
+    setError('');
+    setEmail('');
+    setPassword('');
+    setFarmName('');
+    setRegion('');
   };
 
   return (
@@ -44,12 +63,51 @@ const Login = ({ onLogin }) => {
             <Sprout size={32} className="login-icon" />
           </div>
           <h1 className="login-title">Farm Diagnostics</h1>
-          <p className="login-subtitle">Sign in to access your crop intelligence and health analytics dashboard.</p>
+          <p className="login-subtitle">
+            {isRegistering 
+              ? 'Create a new farm account to track your crops.' 
+              : 'Sign in to access your crop intelligence and health analytics dashboard.'}
+          </p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
           {error && <div style={{ color: '#f87171', fontSize: '0.875rem', textAlign: 'center', backgroundColor: 'rgba(248, 113, 113, 0.1)', padding: '0.5rem', borderRadius: '8px', border: '1px solid rgba(248, 113, 113, 0.2)' }}>{error}</div>}
           
+          {isRegistering && (
+            <>
+              <div className="form-group">
+                <label htmlFor="farmName">Farm Name</label>
+                <div className="input-wrapper">
+                  <Leaf size={18} className="input-icon" />
+                  <input
+                    id="farmName"
+                    type="text"
+                    className="login-input"
+                    placeholder="e.g. Green Valley Farm"
+                    value={farmName}
+                    onChange={(e) => setFarmName(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="region">Region / Location</label>
+                <div className="input-wrapper">
+                  <MapPin size={18} className="input-icon" />
+                  <input
+                    id="region"
+                    type="text"
+                    className="login-input"
+                    placeholder="e.g. Punjab, India"
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value)}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+            </>
+          )}
           <div className="form-group">
             <label htmlFor="email">Farmer ID / Email</label>
             <div className="input-wrapper">
@@ -82,9 +140,11 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
 
-          <div className="forgot-password">
-            <span className="forgot-link">Recover Access?</span>
-          </div>
+          {!isRegistering && (
+            <div className="forgot-password">
+              <span className="forgot-link">Recover Access?</span>
+            </div>
+          )}
 
           <button type="submit" className="login-btn" disabled={isLoading}>
             {isLoading ? (
@@ -94,15 +154,17 @@ const Login = ({ onLogin }) => {
               </>
             ) : (
               <>
-                Sign In to Dashboard <ArrowRight size={18} />
+                {isRegistering ? 'Create Account' : 'Sign In to Dashboard'} <ArrowRight size={18} />
               </>
             )}
           </button>
         </form>
 
         <div className="login-footer">
-          Don't have an account? 
-          <span className="register-link">Register Farm</span>
+          {isRegistering ? 'Already have an account?' : "Don't have an account?"} 
+          <span className="register-link" onClick={toggleMode}>
+            {isRegistering ? 'Sign In' : 'Register Farm'}
+          </span>
         </div>
       </div>
     </div>
