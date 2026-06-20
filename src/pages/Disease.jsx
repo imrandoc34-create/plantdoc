@@ -150,13 +150,13 @@ const Disease = () => {
         } catch (err) {
           URL.revokeObjectURL(objectUrl);
           console.error('Plant detection error:', err);
-          resolve(true); // fail-open: on error, allow scan
+          resolve(false); // Reject on error instead of failing open
         }
       };
       
       img.onerror = () => {
         URL.revokeObjectURL(objectUrl);
-        resolve(true); // fail-open: on load error, allow scan
+        resolve(false); // Reject on load error (e.g. broken image triggering 404)
       };
       
       img.src = objectUrl;
@@ -270,102 +270,104 @@ const Disease = () => {
         </div>
 
         {/* ── Save to Timeline ── */}
-        {savedToTimeline ? (
-          <div className="timeline-save-success">
-            <CheckCircle size={20} style={{ color: '#10b981' }} />
-            <span>Saved to Timeline!</span>
-            <button className="btn btn-primary timeline-view-btn" onClick={() => navigate('/timeline')}>
-              <History size={14} /> View Timeline
-            </button>
-          </div>
-        ) : (
-          <>
-            {!showTimelineSave ? (
-              <button
-                className="btn btn-timeline mt-4 w-full"
-                onClick={() => { setShowTimelineSave(true); setSavedToTimeline(false); }}
-              >
-                <History size={16} /> Save to Plant Timeline
+        {result.name !== 'Not a Plant Detected' && (
+          savedToTimeline ? (
+            <div className="timeline-save-success">
+              <CheckCircle size={20} style={{ color: '#10b981' }} />
+              <span>Saved to Timeline!</span>
+              <button className="btn btn-primary timeline-view-btn" onClick={() => navigate('/timeline')}>
+                <History size={14} /> View Timeline
               </button>
-            ) : (
-              <div className="timeline-save-panel">
-                <div className="timeline-save-header">
-                  <span><History size={16} /> Save Scan to Timeline</span>
-                  <button onClick={() => setShowTimelineSave(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}>
-                    <X size={16} />
-                  </button>
-                </div>
-
-                <div className="timeline-save-tabs">
-                  <button
-                    className={`tl-tab ${timelinePlantMode === 'existing' ? 'active' : ''}`}
-                    onClick={() => setTimelinePlantMode('existing')}
-                    disabled={existingPlants.length === 0}
-                  >
-                    Existing Plant
-                  </button>
-                  <button
-                    className={`tl-tab ${timelinePlantMode === 'new' ? 'active' : ''}`}
-                    onClick={() => setTimelinePlantMode('new')}
-                  >
-                    <Plus size={13} /> New Plant
-                  </button>
-                </div>
-
-                {timelinePlantMode === 'existing' && (
-                  existingPlants.length === 0 ? (
-                    <p className="tl-empty">No plants in timeline yet. Switch to "New Plant".</p>
-                  ) : (
-                    <select
-                      className="tl-select"
-                      value={timelineSelectedPlant}
-                      onChange={e => setTimelineSelectedPlant(e.target.value)}
-                    >
-                      <option value="">-- Select a plant --</option>
-                      {existingPlants.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                      ))}
-                    </select>
-                  )
-                )}
-
-                {timelinePlantMode === 'new' && (
-                  <>
-                    <input
-                      className="tl-input"
-                      placeholder="Plant name (e.g. Herb Garden Basil)"
-                      value={timelineNewPlantName}
-                      onChange={e => setTimelineNewPlantName(e.target.value)}
-                    />
-                    <input
-                      className="tl-input"
-                      placeholder="Species (optional)"
-                      value={timelineNewPlantSpecies}
-                      onChange={e => setTimelineNewPlantSpecies(e.target.value)}
-                    />
-                  </>
-                )}
-
-                <textarea
-                  className="tl-textarea"
-                  placeholder="Add notes (treatment applied, observations)..."
-                  value={timelineNotes}
-                  onChange={e => setTimelineNotes(e.target.value)}
-                />
-
+            </div>
+          ) : (
+            <>
+              {!showTimelineSave ? (
                 <button
-                  className="btn btn-primary mt-4 w-full"
-                  onClick={() => saveToTimeline(result, imageUrl)}
-                  disabled={
-                    (timelinePlantMode === 'existing' && !timelineSelectedPlant) ||
-                    (timelinePlantMode === 'new' && !timelineNewPlantName.trim())
-                  }
+                  className="btn btn-timeline mt-4 w-full"
+                  onClick={() => { setShowTimelineSave(true); setSavedToTimeline(false); }}
                 >
-                  <Save size={15} /> Save Scan to Timeline
+                  <History size={16} /> Save to Plant Timeline
                 </button>
-              </div>
-            )}
-          </>
+              ) : (
+                <div className="timeline-save-panel">
+                  <div className="timeline-save-header">
+                    <span><History size={16} /> Save Scan to Timeline</span>
+                    <button onClick={() => setShowTimelineSave(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}>
+                      <X size={16} />
+                    </button>
+                  </div>
+
+                  <div className="timeline-save-tabs">
+                    <button
+                      className={`tl-tab ${timelinePlantMode === 'existing' ? 'active' : ''}`}
+                      onClick={() => setTimelinePlantMode('existing')}
+                      disabled={existingPlants.length === 0}
+                    >
+                      Existing Plant
+                    </button>
+                    <button
+                      className={`tl-tab ${timelinePlantMode === 'new' ? 'active' : ''}`}
+                      onClick={() => setTimelinePlantMode('new')}
+                    >
+                      <Plus size={13} /> New Plant
+                    </button>
+                  </div>
+
+                  {timelinePlantMode === 'existing' && (
+                    existingPlants.length === 0 ? (
+                      <p className="tl-empty">No plants in timeline yet. Switch to "New Plant".</p>
+                    ) : (
+                      <select
+                        className="tl-select"
+                        value={timelineSelectedPlant}
+                        onChange={e => setTimelineSelectedPlant(e.target.value)}
+                      >
+                        <option value="">-- Select a plant --</option>
+                        {existingPlants.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    )
+                  )}
+
+                  {timelinePlantMode === 'new' && (
+                    <>
+                      <input
+                        className="tl-input"
+                        placeholder="Plant name (e.g. Herb Garden Basil)"
+                        value={timelineNewPlantName}
+                        onChange={e => setTimelineNewPlantName(e.target.value)}
+                      />
+                      <input
+                        className="tl-input"
+                        placeholder="Species (optional)"
+                        value={timelineNewPlantSpecies}
+                        onChange={e => setTimelineNewPlantSpecies(e.target.value)}
+                      />
+                    </>
+                  )}
+
+                  <textarea
+                    className="tl-textarea"
+                    placeholder="Add notes (treatment applied, observations)..."
+                    value={timelineNotes}
+                    onChange={e => setTimelineNotes(e.target.value)}
+                  />
+
+                  <button
+                    className="btn btn-primary mt-4 w-full"
+                    onClick={() => saveToTimeline(result, imageUrl)}
+                    disabled={
+                      (timelinePlantMode === 'existing' && !timelineSelectedPlant) ||
+                      (timelinePlantMode === 'new' && !timelineNewPlantName.trim())
+                    }
+                  >
+                    <Save size={15} /> Save Scan to Timeline
+                  </button>
+                </div>
+              )}
+            </>
+          )
         )}
 
         <button className="btn btn-secondary mt-4 w-full" onClick={() => { clearFn(); setSavedToTimeline(false); setShowTimelineSave(false); }}>{btnText}</button>

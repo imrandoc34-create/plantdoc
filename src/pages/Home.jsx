@@ -292,7 +292,7 @@ const Home = () => {
               <Activity size={20} />
               AI Disease Scanner Demo
             </h2>
-            <span className="crop-category-tag">Sandbox Sandbox</span>
+            <span className="crop-category-tag">Sandbox</span>
           </div>
           
           <p className="hero-subtitle" style={{ fontSize: '0.875rem', marginInline: '0', textAlign: 'left', marginBottom: '1rem' }}>

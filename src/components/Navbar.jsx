@@ -1,8 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Stethoscope, Droplets, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2 } from 'lucide-react';
+import { Leaf, Stethoscope, Droplets, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2, Lightbulb, LogOut } from 'lucide-react';
 import './Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ onLogout }) => {
   const location = useLocation();
   
   const isActive = (path) => {
@@ -46,7 +46,18 @@ const Navbar = () => {
             <Gamepad2 className="nav-icon" />
             <span>Sandbox</span>
           </Link>
+          <Link to="/ideas" className={`nav-link ${isActive('/ideas')}`}>
+            <Lightbulb className="nav-icon" />
+            <span>Ideas</span>
+          </Link>
         </nav>
+
+        <div className="nav-bottom">
+          <button className="nav-link sign-out-btn" onClick={onLogout} style={{ width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+            <LogOut className="nav-icon" />
+            <span>Sign Out</span>
+          </button>
+        </div>
       </div>
     </header>
   );
