@@ -11,6 +11,7 @@ import Sandbox from './pages/Sandbox';
 import Timeline from './pages/Timeline';
 import Ideas from './pages/Ideas';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
               <Route path="/sandbox" element={<Sandbox />} />
               <Route path="/timeline" element={<Timeline />} />
               <Route path="/ideas" element={<Ideas />} />
+              <Route path="/profile" element={<Profile onLogout={handleLogout} />} />
             </Routes>
           </main>
         </div>

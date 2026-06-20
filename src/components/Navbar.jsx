@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Leaf, Stethoscope, Droplets, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2, Lightbulb, LogOut } from 'lucide-react';
+import { Leaf, Stethoscope, Droplets, ShieldPlus, CalendarDays, LayoutGrid, Gamepad2, Lightbulb, LogOut, UserCircle } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = ({ onLogout }) => {
@@ -49,6 +49,10 @@ const Navbar = ({ onLogout }) => {
           <Link to="/ideas" className={`nav-link ${isActive('/ideas')}`}>
             <Lightbulb className="nav-icon" />
             <span>Ideas</span>
+          </Link>
+          <Link to="/profile" className={`nav-link ${isActive('/profile')}`}>
+            <UserCircle className="nav-icon" />
+            <span>Profile</span>
           </Link>
         </nav>
 

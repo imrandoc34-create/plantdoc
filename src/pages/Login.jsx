@@ -22,6 +22,16 @@ const Login = ({ onLogin }) => {
     // Mock authentication delay
     setTimeout(() => {
       setIsLoading(false);
+      // Save farmer profile data for the Profile page
+      const profileData = {
+        farmerId: email,
+        loginTime: new Date().toISOString(),
+        farmName: `${email}'s Farm`,
+        region: 'India',
+        role: 'Farmer',
+        accountStatus: 'Active',
+      };
+      localStorage.setItem('plantdoc-farmer-profile', JSON.stringify(profileData));
       onLogin(); // Trigger login success
     }, 1200);
   };
